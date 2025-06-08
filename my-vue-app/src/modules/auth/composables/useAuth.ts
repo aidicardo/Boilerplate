@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/useAuthStore';
 export function useAuth() {
   const store = useAuthStore();
 
-  const isAuthenticated = computed(() => !!store.token);
+  const isAuthenticated = computed(() => store.isAuthenticated);
 
   return {
     user: store.user,

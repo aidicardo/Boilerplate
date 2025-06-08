@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import * as authService from '../services/authService';
 import type { User } from '../types';
 
@@ -8,6 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const isAuthenticated = computed(() => !!token.value);
 
   async function login(username: string, password: string) {
     loading.value = true;
@@ -16,6 +17,10 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await authService.login(username, password);
       user.value = response.user;
       token.value = response.token;
+      if (!token.value && (authService.supabase.auth.getSession)) {
+        const { data } = await authService.supabase.auth.getSession();
+        token.value = data.session?.access_token || null;
+      }
     } catch (err: any) {
       error.value = err.message;
       throw err;
@@ -31,6 +36,10 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await authService.register(payload);
       user.value = response.user;
       token.value = response.token;
+      if (!token.value && (authService.supabase.auth.getSession)) {
+        const { data } = await authService.supabase.auth.getSession();
+        token.value = data.session?.access_token || null;
+      }
     } catch (err: any) {
       error.value = err.message;
       throw err;
@@ -54,5 +63,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { user, token, loading, error, login, register, logout };
+  return { user, token, loading, error, isAuthenticated, login, register, logout };
 });
