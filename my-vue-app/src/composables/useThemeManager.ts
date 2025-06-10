@@ -1,4 +1,5 @@
-import { Ref, computed } from 'vue';
+import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { Theme } from '@/types/app';
 
 function updateHtmlTheme(theme: Theme): void {

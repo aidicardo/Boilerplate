@@ -1,4 +1,5 @@
-import { Ref, computed } from 'vue';
+import { computed } from 'vue'
+import type { Ref } from 'vue'
 
 export function useLoadingManager(loading: Ref<boolean>) {
   const isLoading = computed(() => loading.value);
