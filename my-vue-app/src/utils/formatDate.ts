@@ -1,13 +1,26 @@
 import dayjs from 'dayjs';
+import jalali from 'dayjs-jalali';
 
-/**
- * Format a date using dayjs.
- *
- * @param date - A Date object or date string to format.
- * @param format - Optional dayjs format string. Defaults to 'YYYY-MM-DD'.
- * @returns The formatted date string.
- */
-export function formatDate(date: Date | string, format = 'YYYY-MM-DD'): string {
-  const d = dayjs(date);
-  return d.isValid() ? d.format(format) : '';
+dayjs.extend(jalali);
+
+export type CalendarType = 'gregorian' | 'jalali';
+
+export function formatDate(
+  date: Date | string,
+  calendar: CalendarType = 'gregorian',
+  format = 'YYYY-MM-DD'
+): string {
+  const parsed = typeof date === 'string'
+    ? dayjs(date, calendar === 'jalali' ? ({ jalali: true } as any) : undefined)
+    : dayjs(date);
+
+  if (!parsed.isValid()) {
+    return 'Invalid date';
+  }
+
+  if (calendar === 'jalali') {
+    return parsed.locale('fa').format(format);
+  }
+
+  return parsed.format(format);
 }
