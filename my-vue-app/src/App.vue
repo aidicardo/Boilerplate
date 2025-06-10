@@ -1,21 +1,43 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import AuthLayout from '@/layouts/AuthLayout.vue'
+import { useAppStore } from '@/store/useAppStore'
+import { useAuthStore } from '@/modules/auth/store/useAuthStore'
+
+const route = useRoute()
+
+const appStore = useAppStore()
+const authStore = useAuthStore()
+
+const layout = computed(() => {
+  const name = route.meta.layout as string | undefined
+  return name === 'auth' || name === 'public' ? AuthLayout : DefaultLayout
+})
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col text-gray-800">
-    <header class="bg-gray-100">
-      <div class="container mx-auto px-4 py-4">
-        <h1 class="text-xl font-semibold sm:text-2xl">My Vue App</h1>
-      </div>
-    </header>
-    <main class="flex-1 container mx-auto px-4 py-6">
-      <p>Welcome to your new Vue project.</p>
-    </main>
-    <footer class="bg-gray-100">
-      <div class="container mx-auto px-4 py-4 text-center text-sm text-gray-500">
-        &copy; 2025
-      </div>
-    </footer>
+  <div class="min-h-screen bg-gray-50 text-gray-800">
+    <router-view v-slot="{ Component }">
+      <Suspense>
+        <transition name="fade" mode="out-in">
+          <component :is="layout">
+            <component :is="Component" />
+          </component>
+        </transition>
+      </Suspense>
+    </router-view>
   </div>
 </template>
 
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
