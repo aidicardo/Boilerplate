@@ -40,5 +40,5 @@ export const useAppStore = defineStore(
     persist: {
       paths: ['user', 'settings'],
     },
-  },
+  } as any,
 );

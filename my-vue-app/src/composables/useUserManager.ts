@@ -1,4 +1,5 @@
-import { Ref, computed } from 'vue';
+import { computed } from 'vue'
+import type { Ref } from 'vue'
 import type { AppUser } from '@/types/app';
 
 export function useUserManager(user: Ref<AppUser | null>) {
